@@ -1,0 +1,59 @@
+# Docker Compose configuration for UrbanKG Implementation
+# Deploys Apache Jena Fuseki triple store with persistent storage
+
+version: '3.8'
+
+services:
+  # Apache Jena Fuseki - RDF Triple Store
+  fuseki:
+    image: stain/jena-fuseki:4.9.0
+    container_name: urbankg-fuseki
+    ports:
+      - "3030:3030"
+    environment:
+      - ADMIN_PASSWORD=urbankg_admin
+      - JVM_ARGS=-Xmx4g
+    volumes:
+      - fuseki-data:/fuseki
+      - ./ontology:/staging/ontology:ro
+      - ./data:/staging/data:ro
+    networks:
+      - urbankg-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3030/$/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Optional: SPARQL Query UI
+  yasgui:
+    image: erikap/yasgui
+    container_name: urbankg-yasgui
+    ports:
+      - "8080:80"
+    environment:
+      - DEFAULT_SPARQL_ENDPOINT=http://fuseki:3030/urbankg/sparql
+    networks:
+      - urbankg-network
+    depends_on:
+      - fuseki
+    restart: unless-stopped
+
+networks:
+  urbankg-network:
+    driver: bridge
+
+volumes:
+  fuseki-data:
+    driver: local
+
+# Usage:
+# 1. Start services: docker-compose up -d
+# 2. Access Fuseki UI: http://localhost:3030
+# 3. Access YASGUI: http://localhost:8080
+# 4. Create dataset named 'urbankg' via Fuseki UI
+# 5. Load data:
+#    curl -X POST -H "Content-Type: text/turtle" \
+#      --data-binary @ontology/urbankg-core.ttl \
+#      http://localhost:3030/urbankg/data

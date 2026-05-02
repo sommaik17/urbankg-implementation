@@ -1,0 +1,37 @@
+# SPARQL Query B.5: Federated Query Example
+# Cross-Partition Query: Mobility + Energy partitions
+# Purpose: Demonstrate federated governance across independent partitions
+# Demonstrates: DO4 (federated governance)
+
+PREFIX urb: <http://urbankg.org/ontology#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+# Query combining data from mobility and energy partitions
+# Each partition maintained by different municipal departments
+SELECT ?route ?routeLabel ?substation ?powerDemand
+WHERE {
+  # Query mobility partition (Transportation Department)
+  SERVICE <http://urbankg.org/sparql/mobility> {
+    ?route a urb:TransitRoute ;
+           rdfs:label ?routeLabel ;
+           urb:serves ?district .
+  }
+  
+  # Query energy partition (Utilities Department)
+  SERVICE <http://urbankg.org/sparql/energy> {
+    ?substation a urb:PowerSubstation ;
+                urb:locatedInDistrict ?district ;
+                urb:currentPowerDemand ?powerDemand .
+    
+    # Filter for high load substations (>85% capacity)
+    FILTER(?powerDemand > 0.85)
+  }
+}
+ORDER BY ?routeLabel
+
+# This query demonstrates:
+# 1. Independent partition management (DO4)
+# 2. Cross-domain semantic integration via shared ontology (DO1)
+# 3. SPARQL 1.1 SERVICE federation
+# 4. Practical use case: identify transit routes serving high-demand districts

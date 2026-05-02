@@ -1,0 +1,178 @@
+# UrbanKG Instance Data Examples
+# Sample RDF triples demonstrating the ontology in use
+# Based on Bangkok proof-of-concept deployment
+
+@prefix urb: <http://urbankg.org/ontology#> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
+@prefix saref: <https://saref.etsi.org/core/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+
+# ============================================================================
+# ADMINISTRATIVE BOUNDARIES
+# ============================================================================
+
+urb:District_Central a urb:District ;
+    rdfs:label "District Central"@en ;
+    geo:hasGeometry [
+        a geo:Geometry ;
+        geo:asWKT "POLYGON((100.50 13.74, 100.54 13.74, 100.54 13.76, 100.50 13.76, 100.50 13.74))"^^geo:wktLiteral
+    ] .
+
+urb:District_East a urb:District ;
+    rdfs:label "District East"@en ;
+    geo:hasGeometry [
+        a geo:Geometry ;
+        geo:asWKT "POLYGON((100.60 13.71, 100.64 13.71, 100.64 13.74, 100.60 13.74, 100.60 13.71))"^^geo:wktLiteral
+    ] .
+
+urb:District_North a urb:District ;
+    rdfs:label "District North"@en ;
+    geo:hasGeometry [
+        a geo:Geometry ;
+        geo:asWKT "POLYGON((100.53 13.78, 100.57 13.78, 100.57 13.81, 100.53 13.81, 100.53 13.78))"^^geo:wktLiteral
+    ] .
+
+# ============================================================================
+# MOBILITY DOMAIN INSTANCES
+# ============================================================================
+
+urb:Stop_BusTerminal21 a urb:TransitStop ;
+    rdfs:label "Bus Terminal 21"@en ;
+    urb:locatedInDistrict urb:District_Central ;
+    geo:hasGeometry [
+        a geo:Geometry ;
+        geo:asWKT "POINT(100.5234 13.7563)"^^geo:wktLiteral
+    ] .
+
+urb:Route_15 a urb:TransitRoute ;
+    rdfs:label "Bus Route 15"@en ;
+    urb:serves urb:District_Central ;
+    urb:serves urb:District_East .
+
+# ============================================================================
+# ENERGY DOMAIN INSTANCES
+# ============================================================================
+
+urb:Substation_PS047 a urb:PowerSubstation ;
+    rdfs:label "Power Substation PS-047"@en ;
+    urb:locatedInDistrict urb:District_East ;
+    saref:hasCapacity "50.0"^^xsd:decimal ;
+    urb:currentPowerDemand "0.78"^^xsd:decimal ;
+    geo:hasGeometry [
+        a geo:Geometry ;
+        geo:asWKT "POINT(100.6123 13.7234)"^^geo:wktLiteral
+    ] .
+
+urb:SmartMeter_SM1234 a urb:SmartMeter ;
+    rdfs:label "Smart Meter SM-1234"@en ;
+    urb:locatedInDistrict urb:District_Central ;
+    saref:measuresProperty urb:PowerDemand .
+
+# ============================================================================
+# ENVIRONMENT DOMAIN INSTANCES
+# ============================================================================
+
+urb:AQStation_AQ15 a urb:AirQualityStation ;
+    rdfs:label "Air Quality Station AQ-15"@en ;
+    urb:locatedInDistrict urb:District_North ;
+    sosa:hosts urb:Sensor_PM25_AQ15 ;
+    geo:hasGeometry [
+        a geo:Geometry ;
+        geo:asWKT "POINT(100.5456 13.7891)"^^geo:wktLiteral
+    ] .
+
+urb:Sensor_PM25_AQ15 a urb:PM25Sensor ;
+    rdfs:label "PM2.5 Sensor at AQ-15"@en ;
+    sosa:observes urb:PM25Concentration .
+
+# Sample PM2.5 observation
+urb:Obs_20240508_0900_PM25 a sosa:Observation ;
+    sosa:madeBySensor urb:Sensor_PM25_AQ15 ;
+    sosa:observedProperty urb:PM25Concentration ;
+    sosa:hasSimpleResult "38.2"^^xsd:decimal ;
+    sosa:resultTime "2024-05-08T09:00:00Z"^^xsd:dateTime ;
+    qudt:unit <http://qudt.org/vocab/unit/MicroGM-PER-M3> .
+
+# ============================================================================
+# PUBLIC SAFETY DOMAIN INSTANCES
+# ============================================================================
+
+urb:Ambulance_AMB03 a urb:Ambulance ;
+    rdfs:label "Ambulance Unit 03"@en ;
+    urb:locatedInDistrict urb:District_Central ;
+    urb:operationalStatus "available"^^xsd:string ;
+    urb:currentLoad "0"^^xsd:integer ;
+    urb:responseTimeMinutes "5.2"^^xsd:decimal ;
+    geo:hasGeometry [
+        a geo:Geometry ;
+        geo:asWKT "POINT(100.5198 13.7512)"^^geo:wktLiteral
+    ] .
+
+urb:Ambulance_AMB08 a urb:Ambulance ;
+    rdfs:label "Ambulance Unit 08"@en ;
+    urb:locatedInDistrict urb:District_East ;
+    urb:operationalStatus "available"^^xsd:string ;
+    urb:currentLoad "0"^^xsd:integer ;
+    urb:responseTimeMinutes "6.8"^^xsd:decimal ;
+    geo:hasGeometry [
+        a geo:Geometry ;
+        geo:asWKT "POINT(100.6087 13.7289)"^^geo:wktLiteral
+    ] .
+
+urb:Hospital_H01 a urb:Hospital ;
+    rdfs:label "Bangkok General Hospital"@en ;
+    urb:locatedInDistrict urb:District_Central ;
+    urb:capacity "500"^^xsd:decimal ;
+    geo:hasGeometry [
+        a geo:Geometry ;
+        geo:asWKT "POINT(100.5312 13.7543)"^^geo:wktLiteral
+    ] .
+
+urb:Incident_20240508_0815 a urb:Incident ;
+    rdfs:label "Traffic Incident 2024-05-08 08:15"@en ;
+    urb:severityLevel "4"^^xsd:integer ;
+    urb:locatedInDistrict urb:District_Central ;
+    prov:startedAtTime "2024-05-08T08:15:00Z"^^xsd:dateTime ;
+    geo:hasGeometry [
+        a geo:Geometry ;
+        geo:asWKT "POINT(100.5289 13.7601)"^^geo:wktLiteral
+    ] .
+
+# ============================================================================
+# CIVIC SERVICES DOMAIN INSTANCES
+# ============================================================================
+
+urb:GovOffice_G02 a urb:GovernmentOffice ;
+    rdfs:label "District Central Administrative Office"@en ;
+    urb:locatedInDistrict urb:District_Central ;
+    geo:hasGeometry [
+        a geo:Geometry ;
+        geo:asWKT "POINT(100.5267 13.7578)"^^geo:wktLiteral
+    ] .
+
+urb:ServiceRequest_SR5678 a urb:ServiceRequest ;
+    rdfs:label "Street Repair Request #5678"@en ;
+    prov:startedAtTime "2024-05-07T14:30:00Z"^^xsd:dateTime ;
+    urb:locatedInDistrict urb:District_North .
+
+# ============================================================================
+# TEMPORAL NAMED GRAPH EXAMPLE
+# ============================================================================
+
+# Observations stored in timestamped named graph
+GRAPH <http://urbankg.org/observations/2024-05-08T09:00:00Z> {
+    urb:Obs_20240508_0900_PM25 a sosa:Observation ;
+        sosa:madeBySensor urb:Sensor_PM25_AQ15 ;
+        sosa:observedProperty urb:PM25Concentration ;
+        sosa:hasSimpleResult "38.2"^^xsd:decimal ;
+        sosa:resultTime "2024-05-08T09:00:00Z"^^xsd:dateTime .
+}
+
+# Provenance metadata about the observation graph
+<http://urbankg.org/observations/2024-05-08T09:00:00Z> 
+    prov:wasGeneratedBy urb:DataIngestionPipeline_v2.1 ;
+    prov:generatedAtTime "2024-05-08T09:02:15Z"^^xsd:dateTime .

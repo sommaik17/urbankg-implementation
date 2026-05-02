@@ -1,0 +1,39 @@
+# SPARQL Query B.2: Transit-Environment Correlation
+# Cross-Domain Query: Mobility + Environment
+# Purpose: Find districts with high PM2.5 during peak transit hours
+# Demonstrates: DO1 (cross-domain), DO3 (temporal awareness)
+
+PREFIX urb: <http://urbankg.org/ontology#>
+PREFIX sosa: <http://www.w3.org/ns/sosa/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?district (AVG(?pm25) AS ?avgPM25) 
+       (COUNT(DISTINCT ?stop) AS ?transitStops)
+WHERE {
+  # Observations from timestamped named graphs
+  GRAPH ?obsGraph {
+    ?obs a sosa:Observation ;
+         sosa:observedProperty urb:PM25Concentration ;
+         sosa:hasSimpleResult ?pm25 .
+  }
+  
+  # Extract hour from graph URI timestamp
+  # Format: http://urbankg.org/observations/2024-05-08T09:00:00Z
+  BIND(SUBSTR(STR(?obsGraph), 43, 2) AS ?hour)
+  
+  # Filter for peak transit hours (morning: 07-08, evening: 17-18)
+  FILTER(?hour IN ("07", "08", "17", "18"))
+  
+  # Link observation to station and district
+  ?station sosa:madeObservation ?obs ;
+           urb:locatedInDistrict ?district .
+  
+  # Optional: count transit stops in same district
+  OPTIONAL {
+    ?stop a urb:TransitStop ;
+          urb:locatedInDistrict ?district .
+  }
+}
+GROUP BY ?district
+HAVING(AVG(?pm25) > 35)  # WHO guideline threshold
+ORDER BY DESC(?avgPM25)

@@ -1,0 +1,47 @@
+# SPARQL Query B.1: Cascade Impact Analysis
+# Cross-Domain Query: Mobility + Energy + Environment
+# Purpose: Find all infrastructure affected by a traffic incident
+# Demonstrates: DO1 (semantic interoperability), DO5 (spatial reasoning)
+
+PREFIX urb: <http://urbankg.org/ontology#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX sosa: <http://www.w3.org/ns/sosa/>
+
+SELECT ?incident ?incidentSeverity ?affectedType ?affectedEntity ?distance
+WHERE {
+  # Target incident (high severity)
+  ?incident a urb:Incident ;
+            urb:severityLevel ?incidentSeverity ;
+            geo:hasGeometry ?incidentGeom .
+  FILTER(?incidentSeverity >= 4)
+  
+  # Find power substations within radius
+  {
+    ?affectedEntity a urb:PowerSubstation ;
+                    geo:hasGeometry ?affectedGeom .
+    BIND("PowerSubstation" AS ?affectedType)
+  }
+  UNION
+  # Find air quality sensors within radius
+  {
+    ?affectedEntity a urb:AirQualityStation ;
+                    geo:hasGeometry ?affectedGeom .
+    BIND("AirQualityStation" AS ?affectedType)
+  }
+  UNION
+  # Find transit stops within radius
+  {
+    ?affectedEntity a urb:TransitStop ;
+                    geo:hasGeometry ?affectedGeom .
+    BIND("TransitStop" AS ?affectedType)
+  }
+  
+  # Calculate distance and filter by threshold (500 meters)
+  BIND(geof:distance(?incidentGeom, ?affectedGeom, 
+       <http://www.opengis.net/def/uom/OGC/1.0/metre>) AS ?distance)
+  FILTER(?distance <= 500.0)
+}
+ORDER BY ?incidentSeverity DESC(?distance)
+LIMIT 20

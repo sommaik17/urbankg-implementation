@@ -1,0 +1,45 @@
+# SPARQL Query B.3: Emergency Resource Optimization
+# Cross-Domain Query: Public Safety + Mobility
+# Purpose: Find available emergency units within response threshold
+# Demonstrates: DO1 (semantic interoperability), DO5 (spatial + rule-based reasoning)
+
+PREFIX urb: <http://urbankg.org/ontology#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?unit ?label ?status ?responseTime ?currentLoad ?distance
+WHERE {
+  # Target incident location
+  urb:Incident_20240508_0815 geo:hasGeometry ?incidentGeom .
+  
+  # Emergency units with availability status
+  ?unit a urb:EmergencyUnit ;
+        rdfs:label ?label ;
+        urb:operationalStatus ?status ;
+        urb:responseTimeMinutes ?responseTime ;
+        urb:currentLoad ?currentLoad ;
+        geo:hasGeometry ?unitGeom .
+  
+  # Filter for available units only
+  FILTER(?status = "available")
+  
+  # Calculate distance between unit and incident
+  BIND(geof:distance(?unitGeom, ?incidentGeom, 
+       <http://www.opengis.net/def/uom/OGC/1.0/metre>) AS ?distance)
+  
+  # Filter for units within 8-minute response threshold
+  # Assuming average speed 40 km/h = 666.67 m/min
+  # 8 minutes = 5333 meters maximum distance
+  FILTER(?responseTime <= 8.0)
+  
+  # Exclude units in high-risk zones
+  OPTIONAL {
+    ?unit urb:locatedInDistrict ?district .
+    ?district urb:riskLevel ?risk .
+  }
+  FILTER(!BOUND(?risk) || ?risk < 4)
+}
+ORDER BY ?currentLoad ASC, ?distance ASC
+LIMIT 5

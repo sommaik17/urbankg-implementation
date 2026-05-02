@@ -1,0 +1,306 @@
+# UrbanKG Core Ontology
+# Knowledge Graphs for Integrated Urban Data Management in Smart Cities
+# Authors: Sommai Khantong, Charuay Savithi, Mohammad Nazir Ahmad
+# License: MIT
+# Repository: https://github.com/sommaik17/urbankg-implementation
+
+@prefix urb: <http://urbankg.org/ontology#> .
+@prefix geo: <http://www.opengis.net/ont/geosparql#> .
+@prefix sosa: <http://www.w3.org/ns/sosa/> .
+@prefix ssn: <http://www.w3.org/ns/ssn/> .
+@prefix saref: <https://saref.etsi.org/core/> .
+@prefix time: <http://www.w3.org/2006/time#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix gtfs: <http://vocab.gtfs.org/terms#> .
+
+# ============================================================================
+# ONTOLOGY METADATA
+# ============================================================================
+
+<http://urbankg.org/ontology> a owl:Ontology ;
+    rdfs:label "UrbanKG Core Ontology"@en ;
+    rdfs:comment "Ontology for integrated urban data management in smart cities"@en ;
+    owl:versionInfo "1.0" ;
+    owl:imports <http://www.opengis.net/ont/geosparql> ,
+                <http://www.w3.org/ns/sosa/> ,
+                <https://saref.etsi.org/core/> ,
+                <http://www.w3.org/2006/time#> ,
+                <http://www.w3.org/ns/prov#> .
+
+# ============================================================================
+# MOBILITY DOMAIN CLASSES
+# ============================================================================
+
+urb:TransitStop a owl:Class ;
+    rdfs:subClassOf geo:Feature ;
+    rdfs:label "Transit Stop"@en ;
+    rdfs:comment "Public transportation boarding point"@en ;
+    owl:equivalentClass gtfs:Stop .
+
+urb:TransitRoute a owl:Class ;
+    rdfs:subClassOf geo:Feature ;
+    rdfs:label "Transit Route"@en ;
+    rdfs:comment "Scheduled public transportation route"@en ;
+    owl:equivalentClass gtfs:Route .
+
+urb:Vehicle a owl:Class ;
+    rdfs:subClassOf geo:Feature ;
+    rdfs:label "Transit Vehicle"@en ;
+    rdfs:comment "Public transportation vehicle (bus, train, etc.)"@en .
+
+# ============================================================================
+# ENERGY DOMAIN CLASSES
+# ============================================================================
+
+urb:PowerSubstation a owl:Class ;
+    rdfs:subClassOf saref:Device, geo:Feature ;
+    rdfs:label "Power Substation"@en ;
+    rdfs:comment "Electrical power distribution facility"@en .
+
+urb:SmartMeter a owl:Class ;
+    rdfs:subClassOf saref:Meter, sosa:Sensor ;
+    rdfs:label "Smart Meter"@en ;
+    rdfs:comment "Energy consumption monitoring device"@en .
+
+urb:PowerDemand a owl:Class ;
+    rdfs:subClassOf sosa:ObservableProperty ;
+    rdfs:label "Power Demand"@en ;
+    rdfs:comment "Electrical power demand measurement"@en .
+
+# ============================================================================
+# ENVIRONMENT DOMAIN CLASSES
+# ============================================================================
+
+urb:AirQualityStation a owl:Class ;
+    rdfs:subClassOf sosa:Platform, geo:Feature ;
+    rdfs:label "Air Quality Monitoring Station"@en ;
+    owl:equivalentClass ssn:Platform .
+
+urb:PM25Sensor a owl:Class ;
+    rdfs:subClassOf sosa:Sensor ;
+    rdfs:label "PM2.5 Sensor"@en ;
+    sosa:observes urb:PM25Concentration .
+
+urb:PM25Concentration a owl:Class ;
+    rdfs:subClassOf sosa:ObservableProperty ;
+    rdfs:label "PM2.5 Concentration"@en ;
+    rdfs:comment "Particulate matter 2.5 concentration in air"@en .
+
+urb:NO2Sensor a owl:Class ;
+    rdfs:subClassOf sosa:Sensor ;
+    rdfs:label "NO2 Sensor"@en .
+
+urb:COSensor a owl:Class ;
+    rdfs:subClassOf sosa:Sensor ;
+    rdfs:label "CO Sensor"@en .
+
+# ============================================================================
+# PUBLIC SAFETY DOMAIN CLASSES
+# ============================================================================
+
+urb:EmergencyUnit a owl:Class ;
+    rdfs:subClassOf geo:Feature ;
+    rdfs:label "Emergency Response Unit"@en ;
+    rdfs:comment "Ambulance, fire truck, or police vehicle"@en .
+
+urb:Ambulance a owl:Class ;
+    rdfs:subClassOf urb:EmergencyUnit ;
+    rdfs:label "Ambulance"@en .
+
+urb:Hospital a owl:Class ;
+    rdfs:subClassOf geo:Feature ;
+    rdfs:label "Hospital"@en ;
+    rdfs:comment "Medical care facility"@en .
+
+urb:Incident a owl:Class ;
+    rdfs:subClassOf prov:Activity, geo:Feature ;
+    rdfs:label "Urban Incident"@en ;
+    rdfs:comment "Traffic accident, emergency event, or public safety incident"@en .
+
+urb:RiskZone a owl:Class ;
+    rdfs:subClassOf geo:Feature ;
+    rdfs:label "Risk Zone"@en ;
+    rdfs:comment "Geographic area with elevated risk level"@en .
+
+# ============================================================================
+# CIVIC SERVICES DOMAIN CLASSES
+# ============================================================================
+
+urb:GovernmentOffice a owl:Class ;
+    rdfs:subClassOf geo:Feature ;
+    rdfs:label "Government Office"@en ;
+    rdfs:comment "Public administrative service facility"@en .
+
+urb:PublicFacility a owl:Class ;
+    rdfs:subClassOf geo:Feature ;
+    rdfs:label "Public Facility"@en ;
+    rdfs:comment "Public service infrastructure (library, community center, etc.)"@en .
+
+urb:ServiceRequest a owl:Class ;
+    rdfs:subClassOf prov:Activity ;
+    rdfs:label "Citizen Service Request"@en ;
+    rdfs:comment "Civic issue or service request from residents"@en .
+
+# ============================================================================
+# ADMINISTRATIVE DOMAIN CLASSES
+# ============================================================================
+
+urb:District a owl:Class ;
+    rdfs:subClassOf geo:Feature ;
+    rdfs:label "Administrative District"@en ;
+    rdfs:comment "Municipal administrative boundary"@en .
+
+urb:City a owl:Class ;
+    rdfs:subClassOf geo:Feature ;
+    rdfs:label "City"@en .
+
+# ============================================================================
+# OBJECT PROPERTIES - SPATIAL
+# ============================================================================
+
+urb:locatedInDistrict a owl:ObjectProperty ;
+    rdfs:domain geo:Feature ;
+    rdfs:range urb:District ;
+    rdfs:subPropertyOf geo:sfWithin ;
+    rdfs:label "located in district"@en ;
+    rdfs:comment "Indicates that a feature is located within an administrative district"@en .
+
+urb:spatiallyContains a owl:ObjectProperty, owl:TransitiveProperty ;
+    rdfs:domain geo:Feature ;
+    rdfs:range geo:Feature ;
+    rdfs:subPropertyOf geo:sfContains ;
+    rdfs:label "spatially contains"@en ;
+    rdfs:comment "Transitive spatial containment relationship"@en .
+
+urb:nearbyTo a owl:ObjectProperty, owl:SymmetricProperty ;
+    rdfs:domain geo:Feature ;
+    rdfs:range geo:Feature ;
+    rdfs:label "nearby to"@en ;
+    rdfs:comment "Symmetric proximity relationship between features"@en .
+
+# ============================================================================
+# OBJECT PROPERTIES - TEMPORAL
+# ============================================================================
+
+urb:operationalAt a owl:ObjectProperty ;
+    rdfs:domain urb:EmergencyUnit ;
+    rdfs:range time:Instant ;
+    rdfs:label "operational at time"@en ;
+    rdfs:comment "Timestamp when emergency unit became operational"@en .
+
+urb:occurredAt a owl:ObjectProperty ;
+    rdfs:domain urb:Incident ;
+    rdfs:range time:Instant ;
+    rdfs:label "occurred at time"@en .
+
+# ============================================================================
+# OBJECT PROPERTIES - OBSERVATION
+# ============================================================================
+
+urb:observedBy a owl:ObjectProperty ;
+    rdfs:domain sosa:ObservableProperty ;
+    rdfs:range sosa:Sensor ;
+    rdfs:subPropertyOf sosa:isObservedBy ;
+    rdfs:label "observed by"@en .
+
+# ============================================================================
+# OBJECT PROPERTIES - SERVICE
+# ============================================================================
+
+urb:serves a owl:ObjectProperty ;
+    rdfs:domain urb:TransitRoute ;
+    rdfs:range urb:District ;
+    rdfs:label "serves district"@en ;
+    rdfs:comment "Indicates that a transit route provides service to a district"@en .
+
+urb:canRespondTo a owl:ObjectProperty ;
+    rdfs:domain urb:EmergencyUnit ;
+    rdfs:range urb:Incident ;
+    rdfs:label "can respond to"@en ;
+    rdfs:comment "Indicates emergency unit capability to respond to incident"@en .
+
+# Property chain: if unit located in district and district spatially contains incident, unit can respond
+urb:canRespondTo owl:propertyChainAxiom (urb:locatedInDistrict urb:spatiallyContains) .
+
+# ============================================================================
+# DATA PROPERTIES - EMERGENCY RESPONSE
+# ============================================================================
+
+urb:operationalStatus a owl:DatatypeProperty ;
+    rdfs:domain urb:EmergencyUnit ;
+    rdfs:range xsd:string ;
+    rdfs:label "operational status"@en ;
+    rdfs:comment "Current status: available, dispatched, maintenance"@en .
+
+urb:currentLoad a owl:DatatypeProperty ;
+    rdfs:domain urb:EmergencyUnit ;
+    rdfs:range xsd:integer ;
+    rdfs:label "current load"@en ;
+    rdfs:comment "Number of active assignments"@en .
+
+urb:responseTimeMinutes a owl:DatatypeProperty ;
+    rdfs:domain urb:EmergencyUnit ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "response time (minutes)"@en ;
+    rdfs:comment "Estimated response time to reach incident location"@en .
+
+urb:severityLevel a owl:DatatypeProperty ;
+    rdfs:domain urb:Incident ;
+    rdfs:range xsd:integer ;
+    rdfs:label "severity level"@en ;
+    rdfs:comment "Incident severity on 1-5 scale (5 most severe)"@en .
+
+urb:riskLevel a owl:DatatypeProperty ;
+    rdfs:domain urb:RiskZone ;
+    rdfs:range xsd:integer ;
+    rdfs:label "risk level"@en ;
+    rdfs:comment "Risk assessment level 1-5 (5 highest risk)"@en .
+
+# ============================================================================
+# DATA PROPERTIES - INFRASTRUCTURE
+# ============================================================================
+
+urb:capacity a owl:DatatypeProperty ;
+    rdfs:domain [ owl:unionOf (urb:Hospital urb:PowerSubstation) ] ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "capacity"@en .
+
+urb:currentPowerDemand a owl:DatatypeProperty ;
+    rdfs:domain urb:PowerSubstation ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "current power demand"@en ;
+    rdfs:comment "Current power demand as fraction of capacity (0.0-1.0)"@en .
+
+# ============================================================================
+# DISJOINTNESS CONSTRAINTS
+# ============================================================================
+
+urb:TransitStop owl:disjointWith urb:PowerSubstation .
+urb:TransitStop owl:disjointWith urb:AirQualityStation .
+urb:TransitStop owl:disjointWith urb:Hospital .
+urb:EmergencyUnit owl:disjointWith urb:TransitStop .
+urb:PowerSubstation owl:disjointWith urb:Hospital .
+
+# ============================================================================
+# EQUIVALENT CLASS DEFINITIONS
+# ============================================================================
+
+# Air quality station is equivalent to platform hosting PM2.5 sensor
+urb:AirQualityStation owl:equivalentClass [
+    a owl:Restriction ;
+    owl:onProperty sosa:hosts ;
+    owl:someValuesFrom urb:PM25Sensor
+] .
+
+# ============================================================================
+# ANNOTATIONS FOR DOCUMENTATION
+# ============================================================================
+
+urb:TransitStop rdfs:seeAlso <http://vocab.gtfs.org/terms#Stop> .
+urb:AirQualityStation rdfs:seeAlso <http://www.w3.org/ns/ssn/> .
+urb:PowerSubstation rdfs:seeAlso <https://saref.etsi.org/core/> .
+urb:Incident rdfs:seeAlso <http://www.w3.org/ns/prov#> .

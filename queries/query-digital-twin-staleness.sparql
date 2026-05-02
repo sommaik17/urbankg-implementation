@@ -1,0 +1,61 @@
+# SPARQL Query B.4: Digital Twin Staleness Check
+# Cross-Domain Query: All 5 domains
+# Purpose: Find assets with stale observations across all domains
+# Demonstrates: DO3 (temporal awareness), DO1 (cross-domain)
+
+PREFIX urb: <http://urbankg.org/ontology#>
+PREFIX sosa: <http://www.w3.org/ns/sosa/>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?asset ?assetType ?label ?district ?lastObservation 
+       ?staleness
+WHERE {
+  # Target geographic zone (e.g., District Central)
+  VALUES ?targetDistrict { urb:District_Central }
+  
+  # All physical assets in the zone across all domains
+  ?asset a ?assetType ;
+         rdfs:label ?label ;
+         urb:locatedInDistrict ?targetDistrict .
+  
+  # Asset types we monitor (all 5 domains)
+  FILTER(?assetType IN (urb:TransitStop,       # Mobility
+                        urb:PowerSubstation,   # Energy
+                        urb:AirQualityStation, # Environment
+                        urb:EmergencyUnit,     # Safety
+                        urb:PublicFacility))   # Civic Services
+  
+  # Find most recent observation for each asset
+  {
+    SELECT ?asset (MAX(?obsTime) AS ?lastObservation)
+    WHERE {
+      GRAPH ?g {
+        ?obs sosa:madeBySensor ?sensor ;
+             sosa:resultTime ?obsTime .
+      }
+      {
+        # Sensors hosted by platforms (air quality stations)
+        ?asset sosa:hosts ?sensor .
+      } UNION {
+        # Direct sensor observations (smart meters, vehicle trackers)
+        ?asset a ?sensorType ;
+               sosa:madeObservation ?obs .
+        FILTER(?sensorType IN (urb:SmartMeter, urb:EmergencyUnit))
+      }
+    }
+    GROUP BY ?asset
+  }
+  
+  # Calculate staleness in hours
+  BIND(NOW() AS ?currentTime)
+  BIND((xsd:dateTime(?currentTime) - xsd:dateTime(?lastObservation)) 
+       / xsd:dayTimeDuration("PT1H") AS ?staleness)
+  
+  # Staleness threshold: 2 hours for real-time assets
+  FILTER(?staleness > 2.0)
+  
+  BIND(?targetDistrict AS ?district)
+}
+ORDER BY DESC(?staleness)
