@@ -1,6 +1,5 @@
 # UrbanKG Implementation
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Paper](https://img.shields.io/badge/Paper-Urban%20Science-blue)](https://www.mdpi.com/journal/urbansci)
 
 This repository contains the complete implementation code for the UrbanKG framework.
 
