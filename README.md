@@ -49,61 +49,7 @@ urbankg-implementation/
 └── README.md
 ```
 
-## Quick Start
 
-### Prerequisites
-
-- Python 3.9+
-- Docker and Docker Compose (for triple store)
-- Java 11+ (for Apache Jena Fuseki)
-
-### 1. Clone Repository
-
-```bash
-git clone https://github.com/sommaik17/urbankg-implementation.git
-cd urbankg-implementation
-```
-
-### 2. Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 3. Start Triple Store
-
-```bash
-cd docker
-docker-compose up -d
-```
-
-This starts Apache Jena Fuseki at `http://localhost:3030`
-
-### 4. Load Ontology and Data
-
-```bash
-# Load core ontology
-curl -X POST \
-  -H "Content-Type: text/turtle" \
-  --data-binary @ontology/urbankg-core.ttl \
-  http://localhost:3030/urbankg/data
-
-# Load sample instances
-curl -X POST \
-  -H "Content-Type: text/turtle" \
-  --data-binary @data/sample-instances.ttl \
-  http://localhost:3030/urbankg/data
-```
-
-### 5. Run Example Queries
-
-```bash
-# Execute cascade impact analysis (Query B.1)
-python src/query_executor.py queries/query-cascade-impact.sparql
-
-# Run accessibility analysis (Section 6.4)
-python src/accessibility_analysis.py
-```
 
 ## Paper Implementation Correspondence
 
