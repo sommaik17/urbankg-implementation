@@ -1,17 +1,8 @@
 # UrbanKG Implementation
-
-**Knowledge Graphs for Integrated Urban Data Management in Smart Cities: A Framework for Semantic Interoperability Across Urban Domains**
-
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Paper](https://img.shields.io/badge/Paper-Urban%20Science-blue)](https://www.mdpi.com/journal/urbansci)
 
-This repository contains the complete implementation code for the UrbanKG framework described in our paper published in *Urban Science*.
-
-## Authors
-
-- **Sommai Khantong** - Mahasarakham University, Thailand
-- **Charuay Savithi** - Mahasarakham University, Thailand  
-- **Mohammad Nazir Ahmad** - Universiti Kebangsaan Malaysia
+This repository contains the complete implementation code for the UrbanKG framework.
 
 ## Overview
 
