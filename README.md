@@ -275,26 +275,6 @@ Areas for contribution:
 - Visualization dashboards
 - Performance benchmarks
 
-## Documentation
-
-- **[Ontology Reference](docs/ONTOLOGY.md)** - Complete class/property documentation
-- **[Query Patterns](docs/QUERIES.md)** - SPARQL patterns and examples
-- **[Deployment Guide](docs/DEPLOYMENT.md)** - Production deployment
-- **[Data Sources](docs/DATA_SOURCES.md)** - Dataset documentation
-- **[API Reference](docs/API.md)** - Python API documentation
-
-## Support
-
-- 📧 Email: sommai.k@acc.msu.ac.th
-- 🐛 Issues: [GitHub Issues](https://github.com/sommaik17/urbankg-implementation/issues)
-- 📖 Paper: [Urban Science Journal](https://www.mdpi.com/journal/urbansci)
-
-## Acknowledgments
-
-- Mahasarakham Business School for funding
-- W3C/OGC for ontology standards
-- Bangkok Metropolitan Administration for data access
-- Apache Jena project for triple store infrastructure
 
 ## Roadmap
 
