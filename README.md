@@ -221,44 +221,7 @@ UrbanKG aligns with the following W3C/OGC standards:
 - **QUDT** - Units of measurement
 - **GTFS** - General Transit Feed Specification
 
-## Testing
 
-```bash
-# Run unit tests
-pytest tests/
-
-# Run SPARQL query validation
-python tests/validate_queries.py
-
-# Run ontology consistency checks
-robot verify --input ontology/urbankg-core.ttl
-```
-
-## Docker Deployment
-
-```bash
-# Build and start full stack
-docker-compose up --build
-
-# Services available at:
-# - Fuseki: http://localhost:3030
-# - Query UI: http://localhost:8080
-```
-
-## Citation
-
-If you use this implementation, please cite our paper:
-
-```bibtex
-@article{khantong2026urbankg,
-  title={Knowledge Graphs for Integrated Urban Data Management in Smart Cities: 
-         A Framework for Semantic Interoperability Across Urban Domains},
-  author={Khantong, Sommai and Savithi, Charuay and Ahmad, Mohammad Nazir},
-  journal={Urban Science},
-  year={2026},
-  publisher={MDPI}
-}
-```
 
 ## License
 
